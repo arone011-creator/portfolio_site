@@ -23,6 +23,47 @@
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
+
+  <!-- PostHog -->
+  <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.uploadQueue.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_pQuj32PctpL8io2snyKoWDhKGB6HXpoBSky6H8svDyiY', { api_host: 'https://us.i.posthog.com', person_profiles: 'identified_only' })
+  </script>
+
+  <!-- PostHog: resume / one-pager / live-product click tracking -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var resumeLink = e.target.closest('a[href*="Resume.pdf"]');
+      if (resumeLink) {
+        var section = resumeLink.closest('section');
+        posthog.capture('resume_viewed', {
+          location: section ? section.id : 'nav',
+          link_text: resumeLink.textContent.trim()
+        });
+        return;
+      }
+
+      var liveLink = e.target.closest('.proj-block a[target="_blank"]');
+      if (liveLink) {
+        var liveProj = liveLink.closest('.proj');
+        var liveTitle = liveProj && liveProj.querySelector('h3');
+        posthog.capture('project_live_link_clicked', {
+          project: liveTitle ? liveTitle.textContent.trim() : null,
+          url: liveLink.href
+        });
+        return;
+      }
+
+      var card = e.target.closest('[data-pdf-url]');
+      if (card) {
+        var cardTitle = card.querySelector('h3');
+        posthog.capture('project_onepager_viewed', {
+          project: cardTitle ? cardTitle.textContent.trim() : null,
+          pdf_url: card.getAttribute('data-pdf-url').split('?')[0]
+        });
+      }
+    }, true);
+  </script>
 </head>
 <body>
   <div id="__bundler_thumbnail">
